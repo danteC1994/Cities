@@ -1,0 +1,51 @@
+# Xcode
+DerivedData/
+*.xcuserdatad/
+*.xcworkspace/
+*.xcuserstate
+*.xcodeproj/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcscmblueprint
+*.xctest/
+*.log
+*.hmap
+
+# Build
+build/
+*.ipa
+*.app
+
+# Swift Package Manager
+/.build/
+/Package.resolved
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Personal files
+*.swp
+*.swo
+
+# Other
+*.DS_Store
+*.user
+*.userprefs
+*.swp
+*.swo
+*.lock
