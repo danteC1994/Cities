@@ -11,6 +11,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+    @StateObject var viewModel: CityListViewModel
 
     var body: some View {
         NavigationSplitView {
@@ -37,6 +38,9 @@ struct ContentView: View {
         } detail: {
             Text("Select an item")
         }
+        .task {
+            await viewModel.fetchCities()
+        }
     }
 
     private func addItem() {
@@ -56,6 +60,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(viewModel: .init())
         .modelContainer(for: Item.self, inMemory: true)
 }
