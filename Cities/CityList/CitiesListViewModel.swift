@@ -113,13 +113,19 @@ final class CitiesListViewModel: ObservableObject {
 }
 
 extension CitiesListViewModel {
+
+    func reachLastElement() {
+        updateUnfilteredCities()
+        citiesToDisplay = unfilteredCities
+    }
+
     func updateUnfilteredCities() {
         let lastIndex = sortedCities.count - 1
         guard lastIndex != citiesCurrentIndex else { return }
 
-        let nextIndex = min(lastIndex, (citiesCurrentIndex + 100))
+        let nextIndex = min(lastIndex, (citiesCurrentIndex + 30))
         guard nextIndex > 0 else { return }
-        unfilteredCities.append(contentsOf: sortedCities[citiesCurrentIndex...100])
+        unfilteredCities.append(contentsOf: sortedCities[citiesCurrentIndex...nextIndex])
         citiesCurrentIndex = nextIndex
     }
 }

@@ -23,6 +23,11 @@ struct CitiesListView: View {
                     .listRowInsets(EdgeInsets())
                     .frame(maxWidth: .infinity)
                     .contentShape(Rectangle())
+                    .onAppear {
+                        if viewModel.citiesToDisplay[index] == viewModel.citiesToDisplay.last {
+                            viewModel.reachLastElement()
+                        }
+                    }
                 }
             }
             .listStyle(PlainListStyle())
