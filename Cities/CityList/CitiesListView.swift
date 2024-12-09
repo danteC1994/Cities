@@ -13,9 +13,9 @@ struct CitiesListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(viewModel.cities.indices, id: \.self) { index in
+                ForEach(viewModel.filteredCities.indices, id: \.self) { index in
                     HStack {
-                        Text("\(viewModel.cities[index].name), \(viewModel.cities[index].country)")
+                        Text("\(viewModel.filteredCities[index].name), \(viewModel.filteredCities[index].country)")
                             .padding()
                         Spacer()
                     }
@@ -26,7 +26,7 @@ struct CitiesListView: View {
                 }
             }
             .listStyle(PlainListStyle())
-            .searchable(text: $searchText)
+            .searchable(text: $viewModel.searchText)
             .task {
                 await viewModel.fetchCities()
             }

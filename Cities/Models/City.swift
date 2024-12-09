@@ -25,3 +25,16 @@ struct City: Identifiable, Codable {
         case coordinates = "coord"
     }
 }
+extension City: Comparable {
+    var sortableName: String {
+        name + country
+    }
+
+    static func == (lhs: City, rhs: City) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    static func < (lhs: City, rhs: City) -> Bool {
+        lhs.sortableName.lowercased() < rhs.sortableName.lowercased()
+    }
+}
