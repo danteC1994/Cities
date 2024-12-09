@@ -5,13 +5,14 @@
 //  Created by dante canizo on 01/12/2024.
 //
 
+import Networking
 import SwiftUI
 import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
-    @StateObject var viewModel: CityListViewModel
+    @StateObject var viewModel: CitiesListViewModel
 
     var body: some View {
         NavigationSplitView {
@@ -60,6 +61,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(viewModel: .init())
+    ContentView(viewModel: .init(repository: CitiesRepositoryImplementation(apiClient: APIClient(baseURL: URL(filePath: "")!))))
         .modelContainer(for: Item.self, inMemory: true)
 }
