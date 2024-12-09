@@ -10,10 +10,13 @@ import Foundation
 import Networking
 
 final class CitiesListViewModel: ObservableObject {
+    var citiesCurrentIndex = 0
     let repository: CitiesRepository
     private var cancellables = Set<AnyCancellable>()
-    @Published private(set) var sortedCities: [City] = []
-    @Published private(set) var filteredCities: [City] = []
+    private(set) var sortedCities: [City] = []
+    private(set) var filteredCities: [City] = []
+    private(set) var unfilteredCities: [City] = []
+    @Published private(set) var citiesToDisplay: [City] = []
     @Published private(set) var error: String?
     @Published var searchText: String = ""
     
@@ -33,7 +36,8 @@ final class CitiesListViewModel: ObservableObject {
             }, receiveValue: { [weak self] cities in
                 guard let self else { return }
                 self.sortedCities = cities.sorted()
-                self.filteredCities = self.filteredCities.isEmpty ? sortedCities : filteredCities
+                self.updateUnfilteredCities()
+                citiesToDisplay = unfilteredCities
             }
         ).store(in: &cancellables)
 
@@ -42,11 +46,12 @@ final class CitiesListViewModel: ObservableObject {
             .sink(receiveValue: { [weak self] searchText in
                 guard let self else { return }
                 if searchText.isEmpty {
-                    filteredCities = sortedCities
+                    citiesToDisplay = unfilteredCities
                     return
                 }
                 let partialResult = searchText > self.searchText ? filteredCities : sortedCities
                 self.filter(cities: partialResult, with: searchText)
+                citiesToDisplay = filteredCities
             }).store(in: &cancellables)
     }
 
@@ -104,5 +109,17 @@ final class CitiesListViewModel: ObservableObject {
         }
         
         return results
+    }
+}
+
+extension CitiesListViewModel {
+    func updateUnfilteredCities() {
+        let lastIndex = sortedCities.count - 1
+        guard lastIndex != citiesCurrentIndex else { return }
+
+        let nextIndex = min(lastIndex, (citiesCurrentIndex + 100))
+        guard nextIndex > 0 else { return }
+        unfilteredCities.append(contentsOf: sortedCities[citiesCurrentIndex...100])
+        citiesCurrentIndex = nextIndex
     }
 }

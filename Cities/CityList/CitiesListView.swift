@@ -13,9 +13,9 @@ struct CitiesListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(viewModel.filteredCities.indices, id: \.self) { index in
+                ForEach(viewModel.citiesToDisplay.indices, id: \.self) { index in
                     HStack {
-                        Text("\(viewModel.filteredCities[index].name), \(viewModel.filteredCities[index].country)")
+                        Text("\(viewModel.citiesToDisplay[index].name), \(viewModel.citiesToDisplay[index].country)")
                             .padding()
                         Spacer()
                     }
