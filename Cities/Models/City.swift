@@ -5,7 +5,7 @@
 //  Created by dante canizo on 03/12/2024.
 //
 
-struct City: Identifiable, Codable {
+struct City: Identifiable, Codable, Hashable {
     let id: Int
     let name: String
     let country: String
@@ -13,7 +13,7 @@ struct City: Identifiable, Codable {
     
     var favorite: Bool = false
     
-    struct Coordinates: Codable {
+    struct Coordinates: Codable, Hashable {
         let lon: Double
         let lat: Double
     }

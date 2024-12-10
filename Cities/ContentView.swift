@@ -12,35 +12,21 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
-    @StateObject var viewModel: CitiesListViewModel
+    @State var selectedCity: City?
 
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
+            CitiesListCoordinator().start(selectedCity: $selectedCity)
+                .navigationTitle("Cities")
         } detail: {
-            Text("Select an item")
-        }
-        .task {
-            await viewModel.fetchCities()
+            if let selectedCity {
+                MapView(city: selectedCity)
+                    .id(selectedCity.id)
+            } else {
+                Text("Select a city to view its location")
+                    .font(.largeTitle)
+                    .foregroundColor(.gray)
+            }
         }
     }
 
@@ -61,6 +47,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(viewModel: .init(repository: CitiesRepositoryImplementation(apiClient: APIClient(baseURL: URL(filePath: "")!))))
+    ContentView()
         .modelContainer(for: Item.self, inMemory: true)
 }

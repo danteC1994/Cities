@@ -9,11 +9,13 @@ import Networking
 import SwiftUI
 
 final class CitiesListCoordinator {
-    func start(with client : APIClientProtocol? = nil) -> some View {
+    func start(
+        with client : APIClientProtocol? = nil,
+        selectedCity: Binding<City?>) -> some View {
         let apiClient: APIClientProtocol = client ?? APIClient(baseURL: URL(string: "https://gist.githubusercontent.com/")!)
         let repository = CitiesRepositoryImplementation(apiClient: apiClient)
         let viewModel = CitiesListViewModel(repository: repository)
-        let view = CitiesListView(viewModel: viewModel)
+        let view = CitiesListView(viewModel: viewModel, selectedCity: selectedCity)
         return view
     }
 }
