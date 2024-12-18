@@ -9,15 +9,17 @@ import SwiftUI
 
 struct CitiesListView: View {
     @StateObject var viewModel: CitiesListViewModel
-    @Binding var selectedCity: City?
+    @State private(set) var currentSelectedCity: City? = nil
+    let selectedCity: City?
     @State private var searchText = ""
+    private(set) var onSelectedCity: ((_ city: City?) -> Void)?
     
     var body: some View {
         ScrollView {
             LazyVStack {
                 ForEach(viewModel.citiesToDisplay.indices, id: \.self) { index in
                     Button(action: {
-                        selectedCity = viewModel.citiesToDisplay[index]
+                        currentSelectedCity = viewModel.citiesToDisplay[index]
                         
                     }) {
                         HStack {
@@ -45,11 +47,23 @@ struct CitiesListView: View {
         .task {
             await viewModel.fetchCities()
         }
+        .onChange(of: currentSelectedCity) { _, newValue in
+            guard let newValue else { return }
+            onSelectedCity?(newValue)
+        }
+    }
+}
+
+extension CitiesListView {
+    func onSelectedCity(action: @escaping (_ city: City?) -> Void) -> CitiesListView {
+        var copy = self
+        copy.onSelectedCity = action
+        return copy
     }
 }
 
 #Preview {
     NavigationView {
-        CitiesListCoordinator().start(selectedCity: .constant(nil))
+//        CitiesListCoordinator().start(selectedCity: .constant(nil))
     }
 }

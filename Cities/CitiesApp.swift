@@ -25,7 +25,7 @@ struct CitiesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(shouldShowMap: false)
         }
         .modelContainer(sharedModelContainer)
     }

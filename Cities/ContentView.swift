@@ -13,15 +13,55 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     @State var selectedCity: City?
+    @StateObject private var router = Router(viewFactory: .init(environment: .production))
+    @State var shouldShowMap: Bool
 
     var body: some View {
+        mainContent()
+    }
+
+    @ViewBuilder
+    private func mainContent() -> some View {
+        switch UIDevice.current.userInterfaceIdiom {
+        case .phone:
+            phoneNavigation
+        case .pad:
+            padNavigation
+        default:
+            padNavigation
+        }
+    }
+
+    private var phoneNavigation: some View {
+        NavigationStack {
+            router.push(
+                route: .citiesList(
+                    selectedCity: nil) { city in
+                        selectedCity = city
+                        shouldShowMap = true
+                    }
+            )
+            .navigationDestination(isPresented: $shouldShowMap) {
+                router.push(route: .map(city: selectedCity))
+            }
+        }
+    }
+
+    private var padNavigation: some View {
         NavigationSplitView {
-            CitiesListCoordinator().start(selectedCity: $selectedCity)
-                .navigationTitle("Cities")
+            router.push(
+                route: .citiesList(
+                    selectedCity: nil) { city in
+                        selectedCity = city
+                        shouldShowMap = true
+                    }
+            )
+            .navigationDestination(isPresented: $shouldShowMap) {
+                router.push(route: .map(city: selectedCity))
+            }
         } detail: {
             if let selectedCity {
-                MapView(city: selectedCity)
-                    .id(selectedCity.id)
+                router.push(route: .map(city: selectedCity))
             } else {
                 Text("Select a city to view its location")
                     .font(.largeTitle)
@@ -46,7 +86,7 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
-}
+//#Preview {
+//    ContentView(, shouldShowMap: <#Bool#>)
+//        .modelContainer(for: Item.self, inMemory: true)
+//}
