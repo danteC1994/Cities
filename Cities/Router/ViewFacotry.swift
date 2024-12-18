@@ -14,7 +14,7 @@ struct ViewFactory {
         case production
     }
     
-    private let apiClient: APIClientProtocol
+    private let apiClient: APIClient
     private let environment: Environment
     
     init(environment: Environment = .production) {
@@ -23,7 +23,7 @@ struct ViewFactory {
         case .stage:
             apiClient = APIClientMock()
         case .production:
-            apiClient = APIClient(baseURL: URL(filePath: "https://gist.githubusercontent.com/"))
+            apiClient = APIClientImplementation(baseURL: URL(filePath: "https://gist.githubusercontent.com/"))
         }
     }
     
