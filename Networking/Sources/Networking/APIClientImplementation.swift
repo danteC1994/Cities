@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class APIClientImplementation: APIClientProtocol {
+public class APIClientImplementation: APIClient {
     private let baseURL: URL
 
     public init(baseURL: URL) {

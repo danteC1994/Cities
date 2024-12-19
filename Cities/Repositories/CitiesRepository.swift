@@ -9,7 +9,5 @@ import Combine
 import Networking
 
 protocol CitiesRepository {
-    var citiesPublisher: Publishers.Map<CurrentValueSubject<[City], APIError>, [City]> { get }
-
-    func fetchCities()
+    func fetchCities() async throws -> [City]
 }

@@ -78,7 +78,8 @@ struct ViewFactory {
         case .production:
             return CitiesListView(
                 viewModel: .init(
-                    repository: CitiesRepositoryImplementation(apiClient: apiClient)
+                    repository: CitiesRepositoryImplementation(apiClient: apiClient),
+                    filterDelegate: AnyArrayFilter(BinarySearchFilter())
                 ),
                 selectedCity: selectedCity
             )
@@ -86,7 +87,8 @@ struct ViewFactory {
         case .stage:
             return CitiesListView(
                 viewModel: .init(
-                    repository: CitiesRepositoryImplementation(apiClient: apiClient)
+                    repository: CitiesRepositoryImplementation(apiClient: apiClient),
+                    filterDelegate: AnyArrayFilter(BinarySearchFilter())
                 ),
                 selectedCity: selectedCity
             )
