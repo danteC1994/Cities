@@ -19,12 +19,7 @@ struct CitiesListView: View {
             if viewModel.loading {
                 ProgressView()
             } else if let error = viewModel.error {
-                GenericErrorView(
-                    title: "",
-                    description: "",
-                    actionTitle: "",
-                    action: {}
-                )
+                errorView(error)
             } else {
                 ScrollView {
                     LazyVStack {
@@ -57,6 +52,33 @@ struct CitiesListView: View {
         .onChange(of: currentSelectedCity) { _, newValue in
             guard let newValue else { return }
             onSelectedCity?(newValue)
+        }
+    }
+
+    private func errorView(_ error: UIError) -> some View {
+        switch error {
+        case .recoverableError(title: let title, description: let description, actionTitle: let actionTitle):
+            GenericErrorView(
+                title: title,
+                description: description,
+                actionTitle: actionTitle,
+                action: {
+                    Task {
+                        await viewModel.fetchCities()
+                    }
+                }
+            )
+        case .nonRecoverableError(title: let title, description: let description, actionTitle: let actionTitle):
+            GenericErrorView(
+                title: title,
+                description: description,
+                actionTitle: actionTitle,
+                action: {
+                    Task {
+                        await viewModel.fetchCities()
+                    }
+                }
+            )
         }
     }
 }

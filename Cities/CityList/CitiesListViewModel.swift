@@ -18,14 +18,16 @@ final class CitiesListViewModel: ObservableObject {
     private(set) var filteredCities: [City] = []
 //    private(set) var unfilteredCities: [City] = []
     @Published private(set) var citiesToDisplay: [City] = []
-    @Published private(set) var error: String?
+    @Published private(set) var error: UIError?
     @Published private(set) var loading: Bool = false
     @Published var searchText: String = ""
     private let filterDelegate: AnyArrayFilter<City>
+    private let errorHandler: ErrorHandler
     
-    init(repository: CitiesRepository, filterDelegate: AnyArrayFilter<City>) {
+    init(repository: CitiesRepository, filterDelegate: AnyArrayFilter<City>, errorHandler: ErrorHandler) {
         self.repository = repository
         self.filterDelegate = filterDelegate
+        self.errorHandler = errorHandler
         subscribeObservers()
     }
 
@@ -46,7 +48,6 @@ final class CitiesListViewModel: ObservableObject {
 
     @MainActor
     func fetchCities() async {
-        print("Hola mundo!!!!!!!!!!!!")
         loading = true
         defer { loading = false }
         do {
@@ -55,21 +56,21 @@ final class CitiesListViewModel: ObservableObject {
             filteredCities = sortedCities
             citiesToDisplay = sortedCities
         } catch {
-//            parseError(error as! APIError)
+            self.error = errorHandler.handle(error: error as? APIError ?? .unknownError)
         }
     }
 
-    private func parseError(_ apiError: APIError) {
-        switch apiError {
-        case .invalidURL,
-                .decodingError,
-                .encodingError,
-                .unknownError:
-            error = "Ups... we have technical problems. Try again later."
-        case .networkError:
-            error = "Ups... something went wrong, try again."
-        }
-    }
+//    private func parseError(_ apiError: APIError) {
+//        switch apiError {
+//        case .invalidURL,
+//                .decodingError,
+//                .encodingError,
+//                .unknownError:
+//            error = "Ups... we have technical problems. Try again later."
+//        case .networkError:
+//            error = "Ups... something went wrong, try again."
+//        }
+//    }
 
     func filter(cities: [City], with prefix: String) -> [City] {
         return filterDelegate.filter(cities: cities, with: prefix)

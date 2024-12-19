@@ -45,5 +45,10 @@ struct GenericErrorView: View {
 }
 
 #Preview {
-//    GenericErrorView(title: <#T##String#>, description: <#T##String#>, actionTitle: <#T##String#>, action: <#T##() -> Void#>)
+    GenericErrorView(
+        title: "Oops! Something went wrong.",
+        description: "It seems we are having technical difficulties, try again later",
+        actionTitle: "Go back",
+        action: {}
+    )
 }

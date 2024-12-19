@@ -79,7 +79,8 @@ struct ViewFactory {
             return CitiesListView(
                 viewModel: .init(
                     repository: CitiesRepositoryImplementation(apiClient: apiClient),
-                    filterDelegate: AnyArrayFilter(BinarySearchFilter())
+                    filterDelegate: AnyArrayFilter(BinarySearchFilter()),
+                    errorHandler: GenericErrorHandler()
                 ),
                 selectedCity: selectedCity
             )
@@ -88,7 +89,8 @@ struct ViewFactory {
             return CitiesListView(
                 viewModel: .init(
                     repository: CitiesRepositoryImplementation(apiClient: apiClient),
-                    filterDelegate: AnyArrayFilter(BinarySearchFilter())
+                    filterDelegate: AnyArrayFilter(BinarySearchFilter()),
+                    errorHandler: GenericErrorHandler()
                 ),
                 selectedCity: selectedCity
             )
