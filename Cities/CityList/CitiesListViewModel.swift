@@ -11,13 +11,15 @@ import Networking
 
 final class CitiesListViewModel: ObservableObject {
     var citiesCurrentIndex = 0
+
     let repository: CitiesRepository
     private var cancellables = Set<AnyCancellable>()
     private(set) var sortedCities: [City] = []
     private(set) var filteredCities: [City] = []
-    private(set) var unfilteredCities: [City] = []
+//    private(set) var unfilteredCities: [City] = []
     @Published private(set) var citiesToDisplay: [City] = []
     @Published private(set) var error: String?
+    @Published private(set) var loading: Bool = false
     @Published var searchText: String = ""
     private let filterDelegate: AnyArrayFilter<City>
     
@@ -44,13 +46,16 @@ final class CitiesListViewModel: ObservableObject {
 
     @MainActor
     func fetchCities() async {
+        print("Hola mundo!!!!!!!!!!!!")
+        loading = true
+        defer { loading = false }
         do {
             let cities = try await repository.fetchCities()
             sortedCities = cities.sorted()
             filteredCities = sortedCities
             citiesToDisplay = sortedCities
         } catch {
-            parseError(error as! APIError)
+//            parseError(error as! APIError)
         }
     }
 
@@ -71,11 +76,12 @@ final class CitiesListViewModel: ObservableObject {
     }
 }
 
+// TODO: check if necessary.
 extension CitiesListViewModel {
 
     func reachLastElement() {
         updateUnfilteredCities()
-        citiesToDisplay = unfilteredCities
+//        citiesToDisplay = unfilteredCities
     }
 
     func updateUnfilteredCities() {
@@ -84,7 +90,7 @@ extension CitiesListViewModel {
 
         let nextIndex = min(lastIndex, (citiesCurrentIndex + 30))
         guard nextIndex > 0 else { return }
-        unfilteredCities.append(contentsOf: sortedCities[citiesCurrentIndex...nextIndex])
+//        unfilteredCities.append(contentsOf: sortedCities[citiesCurrentIndex...nextIndex])
         citiesCurrentIndex = nextIndex
     }
 }

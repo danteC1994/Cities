@@ -15,28 +15,41 @@ struct CitiesListView: View {
     private(set) var onSelectedCity: ((_ city: City?) -> Void)?
     
     var body: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(viewModel.citiesToDisplay.indices, id: \.self) { index in
-                    Button(action: {
-                        currentSelectedCity = viewModel.citiesToDisplay[index]
-                        
-                    }) {
-                        HStack {
-                            Text("\(viewModel.citiesToDisplay[index].name), \(viewModel.citiesToDisplay[index].country)")
-                                .foregroundStyle(.black)
-                            Spacer()
+        VStack {
+            if viewModel.loading {
+                ProgressView()
+            } else if let error = viewModel.error {
+                GenericErrorView(
+                    title: "",
+                    description: "",
+                    actionTitle: "",
+                    action: {}
+                )
+            } else {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(viewModel.citiesToDisplay.indices, id: \.self) { index in
+                            Button(action: {
+                                currentSelectedCity = viewModel.citiesToDisplay[index]
+                                
+                            }) {
+                                HStack {
+                                    Text("\(viewModel.citiesToDisplay[index].name), \(viewModel.citiesToDisplay[index].country)")
+                                        .foregroundStyle(.black)
+                                    Spacer()
+                                }
+                                .padding()
+                            }
+                            .background(index.isMultiple(of: 2) ? Color.clear : Color.gray.opacity(0.2))
+                            .listRowInsets(EdgeInsets())
+                            .frame(maxWidth: .infinity)
+                            .contentShape(Rectangle())
                         }
-                        .padding()
                     }
-                    .background(index.isMultiple(of: 2) ? Color.clear : Color.gray.opacity(0.2))
-                    .listRowInsets(EdgeInsets())
-                    .frame(maxWidth: .infinity)
-                    .contentShape(Rectangle())
+                    .listStyle(PlainListStyle())
+                    .searchable(text: $viewModel.searchText)
                 }
             }
-            .listStyle(PlainListStyle())
-            .searchable(text: $viewModel.searchText)
         }
         .task {
             await viewModel.fetchCities()
