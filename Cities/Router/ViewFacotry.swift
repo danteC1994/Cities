@@ -88,7 +88,7 @@ struct ViewFactory {
         case .stage:
             return CitiesListView(
                 viewModel: .init(
-                    repository: CitiesRepositoryImplementation(apiClient: apiClient),
+                    repository: CitiesRepositoryMock(),
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
                     errorHandler: GenericErrorHandler()
                 ),

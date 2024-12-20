@@ -92,7 +92,24 @@ extension CitiesListView {
 }
 
 #Preview {
-    NavigationView {
-//        CitiesListCoordinator().start(selectedCity: .constant(nil))
+    @Previewable @State var selectedCity: City?
+    @Previewable @State var shouldShowMap: Bool = false
+
+    let router = Router(
+        viewFactory: .init(
+            environment: .stage
+        )
+    )
+
+    NavigationStack {
+        router.push(
+            route: .citiesList(selectedCity: nil) { city in
+                selectedCity = city
+                shouldShowMap = true
+            }
+        )
+        .navigationDestination(isPresented: $shouldShowMap) {
+            router.push(route: .map(city: selectedCity))
+        }
     }
 }

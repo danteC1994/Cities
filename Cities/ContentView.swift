@@ -10,10 +10,10 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @EnvironmentObject var router: Router
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     @State var selectedCity: City?
-    @StateObject private var router = Router(viewFactory: .init(environment: .production))
     @State var shouldShowMap: Bool
 
     var body: some View {
@@ -86,7 +86,14 @@ struct ContentView: View {
     }
 }
 
-//#Preview {
-//    ContentView(, shouldShowMap: <#Bool#>)
-//        .modelContainer(for: Item.self, inMemory: true)
-//}
+#Preview {
+    let router = Router(
+        viewFactory: .init(
+            environment: .stage
+        )
+    )
+
+    ContentView(shouldShowMap: false)
+        .modelContainer(for: Item.self, inMemory: true)
+        .environmentObject(router)
+}

@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct CitiesApp: App {
+    @StateObject private var router = Router(viewFactory: .init(environment: .production))
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -26,6 +28,7 @@ struct CitiesApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(shouldShowMap: false)
+                .environmentObject(router)
         }
         .modelContainer(sharedModelContainer)
     }
