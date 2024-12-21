@@ -80,7 +80,8 @@ struct ViewFactory {
                 viewModel: .init(
                     repository: CitiesRepositoryImplementation(apiClient: apiClient),
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
-                    errorHandler: GenericErrorHandler()
+                    errorHandler: GenericErrorHandler(),
+                    databaseRepository: CitiesDatabaseRepositoryImplementation(modelContainer: PersistenceManager.shared.sharedModelContainer)
                 ),
                 selectedCity: selectedCity
             )
@@ -90,7 +91,8 @@ struct ViewFactory {
                 viewModel: .init(
                     repository: CitiesRepositoryMock(),
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
-                    errorHandler: GenericErrorHandler()
+                    errorHandler: GenericErrorHandler(),
+                    databaseRepository: CitiesDatabaseRepositoryImplementation(modelContainer: PersistenceManager.shared.sharedModelContainer)
                 ),
                 selectedCity: selectedCity
             )

@@ -39,5 +39,5 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView(city: .init(id: 3, name: "Hurzuf", country: "UA", coordinates: .init(lon: 34.283333, lat: 44.549999)))
+    MapView(city: .init(id: 3, name: "Hurzuf", country: "UA", coordinates: .init(lon: 34.283333, lat: 44.549999), isFavorite: false))
 }

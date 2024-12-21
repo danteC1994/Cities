@@ -12,19 +12,22 @@ final class CitiesTestData {
                 id: 707860,
                 name: "Hurzuf",
                 country: "UA",
-                coordinates: City.Coordinates(lon: 34.283333, lat: 44.549999)
+                coordinates: City.Coordinates(lon: 34.283333, lat: 44.549999),
+                isFavorite: false
             ),
             City(
                 id: 519188,
                 name: "Novinki",
                 country: "RU",
-                coordinates: City.Coordinates(lon: 37.666668, lat: 55.683334)
+                coordinates: City.Coordinates(lon: 37.666668, lat: 55.683334),
+                isFavorite: true
             ),
             City(
                 id: 1283378,
                 name: "Gorkhā",
                 country: "NP",
-                coordinates: City.Coordinates(lon: 84.633331, lat: 28.0)
+                coordinates: City.Coordinates(lon: 84.633331, lat: 28.0),
+                isFavorite: false
             )
         ]
     }

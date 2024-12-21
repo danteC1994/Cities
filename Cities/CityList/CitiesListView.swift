@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CitiesListView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject var viewModel: CitiesListViewModel
     @State private(set) var currentSelectedCity: City? = nil
     let selectedCity: City?
@@ -23,20 +24,26 @@ struct CitiesListView: View {
             } else {
                 ScrollView {
                     LazyVStack {
-                        ForEach(viewModel.citiesToDisplay.indices, id: \.self) { index in
+                        ForEach(viewModel.citiesToDisplay, id: \.id) { city in
                             Button(action: {
-                                currentSelectedCity = viewModel.citiesToDisplay[index]
-                                
+                                currentSelectedCity = city
                             }) {
                                 HStack {
-                                    Text("\(viewModel.citiesToDisplay[index].name), \(viewModel.citiesToDisplay[index].country)")
+                                    Text("\(city.name), \(city.country)")
                                         .foregroundStyle(.black)
                                     Spacer()
+                                    Button(action: {
+                                        Task {
+                                            await viewModel.toggleFavorite(for: city)
+                                        }
+                                    }) {
+                                        Image(systemName: city.isFavorite ? "star.fill" : "star")
+                                            .foregroundColor(city.isFavorite ? .yellow : .gray)
+                                    }
                                 }
                                 .padding()
                             }
-                            .background(index.isMultiple(of: 2) ? Color.clear : Color.gray.opacity(0.2))
-                            .listRowInsets(EdgeInsets())
+                            .background(Color.gray.opacity(0.1))
                             .frame(maxWidth: .infinity)
                             .contentShape(Rectangle())
                         }
