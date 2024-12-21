@@ -92,7 +92,7 @@ struct ViewFactory {
                     repository: CitiesRepositoryMock(),
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
                     errorHandler: GenericErrorHandler(),
-                    databaseRepository: CitiesDatabaseRepositoryImplementation(modelContainer: PersistenceManager.shared.sharedModelContainer)
+                    databaseRepository: CItiesDatabaseRepositoryMock()
                 ),
                 selectedCity: selectedCity
             )
