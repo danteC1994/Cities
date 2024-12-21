@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import Networking
 
-final class CitiesRepositoryImplementation: CitiesRepository {
+final class CitiesNetworkingRepositoryImplementation: CitiesNetworkingRepository {
     private let apiClient: APIClient
 
     @Published var cities: [City] = []

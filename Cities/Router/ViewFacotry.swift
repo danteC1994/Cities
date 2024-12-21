@@ -78,7 +78,7 @@ struct ViewFactory {
         case .production:
             return CitiesListView(
                 viewModel: .init(
-                    repository: CitiesRepositoryImplementation(apiClient: apiClient),
+                    repository: CitiesNetworkingRepositoryImplementation(apiClient: apiClient),
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
                     errorHandler: GenericErrorHandler(),
                     databaseRepository: CitiesDatabaseRepositoryImplementation(modelContainer: PersistenceManager.shared.sharedModelContainer)
@@ -89,7 +89,7 @@ struct ViewFactory {
         case .stage:
             return CitiesListView(
                 viewModel: .init(
-                    repository: CitiesRepositoryMock(),
+                    repository: CitiesNetworkingRepositoryMock(),
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
                     errorHandler: GenericErrorHandler(),
                     databaseRepository: CItiesDatabaseRepositoryMock()

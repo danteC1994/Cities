@@ -12,7 +12,7 @@ import Networking
 final class CitiesListViewModel: ObservableObject {
 //    var citiesCurrentIndex = 0
 
-    let repository: CitiesRepository
+    let repository: CitiesNetworkingRepository
     private var cancellables = Set<AnyCancellable>()
     private(set) var sortedCities: [City] = []
     private(set) var filteredCities: [City] = []
@@ -24,7 +24,7 @@ final class CitiesListViewModel: ObservableObject {
     private let errorHandler: ErrorHandler
     let databaseRepository: CitiesDatabaseRepository
     
-    init(repository: CitiesRepository, filterDelegate: AnyArrayFilter<City>, errorHandler: ErrorHandler, databaseRepository: CitiesDatabaseRepository) {
+    init(repository: CitiesNetworkingRepository, filterDelegate: AnyArrayFilter<City>, errorHandler: ErrorHandler, databaseRepository: CitiesDatabaseRepository) {
         self.repository = repository
         self.filterDelegate = filterDelegate
         self.errorHandler = errorHandler
@@ -63,6 +63,18 @@ final class CitiesListViewModel: ObservableObject {
     }
 
     @MainActor
+    func toggleFavorite(for city: City) async {
+        if let index = citiesToDisplay.firstIndex(where: { $0.id == city.id }) {
+            citiesToDisplay[index].isFavorite.toggle()
+            do {
+                try await databaseRepository.updateCityFavorite(citiesToDisplay[index])
+            } catch {
+                print(error)
+            }
+        }
+    }
+
+    @MainActor
     private func updateSavedCities(on cities: [City]) async {
         do {
             let savedCities = try await databaseRepository.fetchCities()
@@ -75,50 +87,7 @@ final class CitiesListViewModel: ObservableObject {
         }
     }
 
-    @MainActor
-    func toggleFavorite(for city: City) async {
-        if let index = citiesToDisplay.firstIndex(where: { $0.id == city.id }) {
-            citiesToDisplay[index].isFavorite.toggle()
-            do {
-                try await databaseRepository.updateCityFavorite(citiesToDisplay[index])
-            } catch {
-                print(error)
-            }
-        }
-    }
-
-//    private func parseError(_ apiError: APIError) {
-//        switch apiError {
-//        case .invalidURL,
-//                .decodingError,
-//                .encodingError,
-//                .unknownError:
-//            error = "Ups... we have technical problems. Try again later."
-//        case .networkError:
-//            error = "Ups... something went wrong, try again."
-//        }
-//    }
-
     func filter(cities: [City], with prefix: String) -> [City] {
         return filterDelegate.filter(cities: cities, with: prefix)
     }
 }
-
-// TODO: check if necessary.
-//extension CitiesListViewModel {
-//
-//    func reachLastElement() {
-//        updateUnfilteredCities()
-////        citiesToDisplay = unfilteredCities
-//    }
-//
-//    func updateUnfilteredCities() {
-//        let lastIndex = sortedCities.count - 1
-//        guard lastIndex != citiesCurrentIndex else { return }
-//
-//        let nextIndex = min(lastIndex, (citiesCurrentIndex + 30))
-//        guard nextIndex > 0 else { return }
-////        unfilteredCities.append(contentsOf: sortedCities[citiesCurrentIndex...nextIndex])
-//        citiesCurrentIndex = nextIndex
-//    }
-//}

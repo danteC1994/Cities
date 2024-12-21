@@ -7,7 +7,7 @@
 
 import Networking
 
-final class CitiesRepositoryMock: CitiesRepository {
+final class CitiesNetworkingRepositoryMock: CitiesNetworkingRepository {
     let apiClient: APIClientMock
 
     init(error: APIError? = nil) {

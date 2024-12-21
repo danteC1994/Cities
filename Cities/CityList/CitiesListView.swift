@@ -22,35 +22,7 @@ struct CitiesListView: View {
             } else if let error = viewModel.error {
                 errorView(error)
             } else {
-                ScrollView {
-                    LazyVStack {
-                        ForEach(viewModel.citiesToDisplay, id: \.id) { city in
-                            Button(action: {
-                                currentSelectedCity = city
-                            }) {
-                                HStack {
-                                    Text("\(city.name), \(city.country)")
-                                        .foregroundStyle(.black)
-                                    Spacer()
-                                    Button(action: {
-                                        Task {
-                                            await viewModel.toggleFavorite(for: city)
-                                        }
-                                    }) {
-                                        Image(systemName: city.isFavorite ? "star.fill" : "star")
-                                            .foregroundColor(city.isFavorite ? .yellow : .gray)
-                                    }
-                                }
-                                .padding()
-                            }
-                            .background(Color.gray.opacity(0.1))
-                            .frame(maxWidth: .infinity)
-                            .contentShape(Rectangle())
-                        }
-                    }
-                    .listStyle(PlainListStyle())
-                    .searchable(text: $viewModel.searchText)
-                }
+                citiesList
             }
         }
         .task {
@@ -59,6 +31,47 @@ struct CitiesListView: View {
         .onChange(of: currentSelectedCity) { _, newValue in
             guard let newValue else { return }
             onSelectedCity?(newValue)
+        }
+    }
+
+    private var citiesList: some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(viewModel.citiesToDisplay, id: \.id) { city in
+                    cityRow(city)
+                    .background(Color.gray.opacity(0.1))
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .padding(.horizontal)
+                }
+            }
+            .listStyle(PlainListStyle())
+            .searchable(text: $viewModel.searchText)
+        }
+    }
+
+    private func cityRow(_ city: City) -> some View {
+        Button(action: {
+            currentSelectedCity = city
+        }) {
+            HStack {
+                Text("\(city.name), \(city.country)")
+                    .foregroundStyle(.black)
+                Spacer()
+                saveButton(city)
+            }
+            .padding()
+        }
+    }
+
+    private func saveButton(_ city: City) -> some View {
+        Button(action: {
+            Task {
+                await viewModel.toggleFavorite(for: city)
+            }
+        }) {
+            Image(systemName: city.isFavorite ? "star.fill" : "star")
+                .foregroundColor(city.isFavorite ? .yellow : .gray)
         }
     }
 

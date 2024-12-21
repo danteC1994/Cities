@@ -8,6 +8,6 @@
 import Combine
 import Networking
 
-protocol CitiesRepository {
+protocol CitiesNetworkingRepository {
     func fetchCities() async throws -> [City]
 }
