@@ -7,7 +7,9 @@
 
 import Networking
 
-final class GenericErrorHandler: ErrorHandler {
+final class GenericErrorHandler { }
+
+extension GenericErrorHandler: NetworkingErrorHandler {
     func handle(error: APIError) -> UIError {
         switch error {
         case .invalidURL, .decodingError, .encodingError, .unknownError:
@@ -22,6 +24,19 @@ final class GenericErrorHandler: ErrorHandler {
                     description: description,
                     actionTitle: "Try again"
                 )
+        }
+    }
+}
+
+extension GenericErrorHandler: DatabaseErrorHandler {
+    func handle(error: DatabaseError) -> UIInformativeError {
+        switch error {
+        case .query:
+                .informativeError(message: "Couldn't find element")
+        case .save:
+                .informativeError(message: "Couldn't save element")
+        case .unknownError:
+                .informativeError(message: "Oops! Something went wrong.")
         }
     }
 }

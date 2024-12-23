@@ -6,11 +6,19 @@
 //
 
 class CItiesDatabaseRepositoryMock: CitiesDatabaseRepository {
+    var error: DatabaseError?
+
+    init(error: DatabaseError? = .query) {
+        self.error = error
+    }
+
     func fetchCities() async throws -> [City] {
         return CitiesTestData.getCities()
     }
     
     func updateCityFavorite(_ city: City) async throws {
-        assertionFailure("Not implemented yet")
+        if let error {
+            throw error
+        }
     }
 }

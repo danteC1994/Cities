@@ -10,24 +10,33 @@ import Foundation
 import Networking
 
 final class CitiesListViewModel: ObservableObject {
-//    var citiesCurrentIndex = 0
-
-    let repository: CitiesNetworkingRepository
-    private var cancellables = Set<AnyCancellable>()
-    private(set) var sortedCities: [City] = []
-    private(set) var filteredCities: [City] = []
+    @Published var searchText: String = ""
     @Published private(set) var citiesToDisplay: [City] = []
     @Published private(set) var error: UIError?
+    @Published private(set) var informativeError: UIInformativeError?
+    @Published var showToast: Bool = false
+    @Published var toastMessage: String = ""
     @Published private(set) var loading: Bool = false
-    @Published var searchText: String = ""
+    private(set) var sortedCities: [City] = []
+    private(set) var filteredCities: [City] = []
+    private var cancellables = Set<AnyCancellable>()
     private let filterDelegate: AnyArrayFilter<City>
-    private let errorHandler: ErrorHandler
-    let databaseRepository: CitiesDatabaseRepository
+    private let netwrorkingErrorHandler: NetworkingErrorHandler
+    private let databaseErrorHandler: DatabaseErrorHandler
+    private let networkingRepository: CitiesNetworkingRepository
+    private let databaseRepository: CitiesDatabaseRepository
     
-    init(repository: CitiesNetworkingRepository, filterDelegate: AnyArrayFilter<City>, errorHandler: ErrorHandler, databaseRepository: CitiesDatabaseRepository) {
-        self.repository = repository
+    init(
+        networkingRepository: CitiesNetworkingRepository,
+        filterDelegate: AnyArrayFilter<City>,
+        netwrorkingErrorHandler: NetworkingErrorHandler,
+        databaseErrorHandler: DatabaseErrorHandler,
+        databaseRepository: CitiesDatabaseRepository
+    ) {
+        self.networkingRepository = networkingRepository
         self.filterDelegate = filterDelegate
-        self.errorHandler = errorHandler
+        self.netwrorkingErrorHandler = netwrorkingErrorHandler
+        self.databaseErrorHandler = databaseErrorHandler
         self.databaseRepository = databaseRepository
         subscribeObservers()
     }
@@ -52,13 +61,13 @@ final class CitiesListViewModel: ObservableObject {
         loading = true
         defer { loading = false }
         do {
-            let cities = try await repository.fetchCities()
+            let cities = try await networkingRepository.fetchCities()
             sortedCities = cities.sorted()
             filteredCities = sortedCities
             citiesToDisplay = sortedCities
             await updateSavedCities(on: citiesToDisplay)
         } catch {
-            self.error = errorHandler.handle(error: error as? APIError ?? .unknownError)
+            self.error = netwrorkingErrorHandler.handle(error: error as? APIError ?? .unknownError)
         }
     }
 
@@ -69,7 +78,15 @@ final class CitiesListViewModel: ObservableObject {
             do {
                 try await databaseRepository.updateCityFavorite(citiesToDisplay[index])
             } catch {
-                print(error)
+                informativeError = databaseErrorHandler.handle(error: error as? DatabaseError ?? .unknownError)
+                switch informativeError {
+                case .informativeError(let message):
+                    toastMessage = message
+                    showToast = true
+                case nil:
+                    break
+                }
+
             }
         }
     }
@@ -81,13 +98,12 @@ final class CitiesListViewModel: ObservableObject {
             savedCities.forEach { city in
                 cities.first(where: { $0.id == city.id })?.isFavorite = city.isFavorite
             }
-            print(cities)
         } catch {
             
         }
     }
 
-    func filter(cities: [City], with prefix: String) -> [City] {
+    private func filter(cities: [City], with prefix: String) -> [City] {
         return filterDelegate.filter(cities: cities, with: prefix)
     }
 }

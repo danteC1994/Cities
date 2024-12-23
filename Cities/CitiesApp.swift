@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct CitiesApp: App {
-    @StateObject private var router = Router(viewFactory: .init(environment: .production))
+    @StateObject private var router = Router(viewFactory: .init(environment: .stage))
 
     var body: some Scene {
         WindowGroup {

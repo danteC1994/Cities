@@ -7,6 +7,6 @@
 
 import Networking
 
-protocol ErrorHandler {
+protocol NetworkingErrorHandler {
     func handle(error: APIError) -> UIError
 }

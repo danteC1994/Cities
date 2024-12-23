@@ -32,6 +32,11 @@ struct CitiesListView: View {
             guard let newValue else { return }
             onSelectedCity?(newValue)
         }
+        .overlay(
+            ToastView(message: viewModel.toastMessage, isShowing: $viewModel.showToast)
+                .padding(),
+            alignment: .bottom
+        )
     }
 
     private var citiesList: some View {
@@ -75,6 +80,7 @@ struct CitiesListView: View {
         }
     }
 
+    @ViewBuilder
     private func errorView(_ error: UIError) -> some View {
         switch error {
         case .recoverableError(title: let title, description: let description, actionTitle: let actionTitle):
