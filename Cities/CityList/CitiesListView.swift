@@ -26,11 +26,10 @@ struct CitiesListView: View {
             }
         }
         .task {
-            await viewModel.fetchCities()
+            await viewModel.fetchCitiesIfNeeded()
         }
-        .onChange(of: currentSelectedCity) { _, newValue in
-            guard let newValue else { return }
-            onSelectedCity?(newValue)
+        .refreshable {
+            await viewModel.refreshCities()
         }
         .overlay(
             ToastView(message: viewModel.toastMessage, isShowing: $viewModel.showToast)
@@ -58,6 +57,7 @@ struct CitiesListView: View {
     private func cityRow(_ city: City) -> some View {
         Button(action: {
             currentSelectedCity = city
+            onSelectedCity?(city)
         }) {
             HStack {
                 Text("\(city.name), \(city.country)")
@@ -90,7 +90,7 @@ struct CitiesListView: View {
                 actionTitle: actionTitle,
                 action: {
                     Task {
-                        await viewModel.fetchCities()
+                        await viewModel.refreshCities()
                     }
                 }
             )
@@ -101,7 +101,7 @@ struct CitiesListView: View {
                 actionTitle: actionTitle,
                 action: {
                     Task {
-                        await viewModel.fetchCities()
+                        await viewModel.refreshCities()
                     }
                 }
             )

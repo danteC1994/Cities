@@ -56,8 +56,17 @@ final class CitiesListViewModel: ObservableObject {
             }).store(in: &cancellables)
     }
 
+    func fetchCitiesIfNeeded() async {
+        guard citiesToDisplay.isEmpty else { return }
+        await fetchCities()
+    }
+
+    func refreshCities() async {
+        await fetchCities()
+    }
+
     @MainActor
-    func fetchCities() async {
+    private func fetchCities() async {
         loading = true
         defer { loading = false }
         do {
@@ -107,7 +116,6 @@ final class CitiesListViewModel: ObservableObject {
             case nil:
                 break
             }
-
         }
     }
 
