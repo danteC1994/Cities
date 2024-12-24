@@ -94,7 +94,7 @@ struct ViewFactory {
                     filterDelegate: AnyArrayFilter(BinarySearchFilter()),
                     netwrorkingErrorHandler: GenericErrorHandler(),
                     databaseErrorHandler: GenericErrorHandler(),
-                    databaseRepository: CItiesDatabaseRepositoryMock()
+                    databaseRepository: CitiesDatabaseRepositoryMock()
                 ),
                 selectedCity: selectedCity
             )

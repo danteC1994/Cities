@@ -9,14 +9,19 @@ import Networking
 
 final class CitiesNetworkingRepositoryMock: CitiesNetworkingRepository {
     let apiClient: APIClientMock
+    var citiesResponse: [City] = CitiesTestData.getCities()
+    var error: APIError? = nil
+    var didFetchCities = false
 
-    init(error: APIError? = nil) {
+    init() {
         self.apiClient = APIClientMock()
-        apiClient.error = error
     }
+
     func fetchCities() async throws -> [City] {
         do {
-            apiClient.response = CitiesTestData.getCities()
+            apiClient.response = citiesResponse
+            apiClient.error = error
+            didFetchCities = true
             return try await apiClient.get(endpoint: .cities, queryItems: nil, headers: nil)
         } catch {
             throw error

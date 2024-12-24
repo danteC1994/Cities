@@ -5,10 +5,10 @@
 //  Created by dante canizo on 21/12/2024.
 //
 
-class CItiesDatabaseRepositoryMock: CitiesDatabaseRepository {
+class CitiesDatabaseRepositoryMock: CitiesDatabaseRepository {
     var error: DatabaseError?
 
-    init(error: DatabaseError? = .query) {
+    init(error: DatabaseError? = nil) {
         self.error = error
     }
 

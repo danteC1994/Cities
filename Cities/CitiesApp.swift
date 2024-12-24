@@ -14,8 +14,18 @@ struct CitiesApp: App {
 
     var body: some Scene {
         WindowGroup {
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["XCInjectBundleInto"] != nil {
+                EmptyView()
+            } else {
+                ContentView(shouldShowMap: false)
+                    .environmentObject(router)
+            }
+            #else
             ContentView(shouldShowMap: false)
                 .environmentObject(router)
+            
+            #endif
         }
         .modelContainer(PersistenceManager.shared.sharedModelContainer)
     }
