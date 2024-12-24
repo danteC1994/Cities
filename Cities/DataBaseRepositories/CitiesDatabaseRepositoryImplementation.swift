@@ -20,14 +20,14 @@ final class CitiesDatabaseRepositoryImplementation: CitiesDatabaseRepository {
         do {
             let cities = try await fetchCities()
             
-            guard let city = cities.first(where: { $0.id == city.id }) else {
-                insert(city)
+            guard let storedCity = cities.first(where: { $0.id == city.id }) else {
+                try insert(city)
                 return
             }
-            
-            city.isFavorite.toggle()
+            storedCity.isFavorite = city.isFavorite
+            try save()
         } catch {
-            print(error)
+            throw DatabaseError.save
         }
     }
 
@@ -38,18 +38,22 @@ final class CitiesDatabaseRepositoryImplementation: CitiesDatabaseRepository {
             let cities = try modelContainer.mainContext.fetch(cityDescriptor)
             return cities
         } catch {
-            print(error)
-            return []
+            throw DatabaseError.query
         }
     }
 
     @MainActor
-    private func insert<T>(_ model: T) where T : PersistentModel {
+    private func insert<T>(_ model: T) throws where T : PersistentModel {
         modelContainer.mainContext.insert(model)
+        try save()
+    }
+
+    @MainActor
+    private func save() throws {
         do {
             try modelContainer.mainContext.save()
         } catch {
-            
+            throw DatabaseError.save
         }
     }
 }

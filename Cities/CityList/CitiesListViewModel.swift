@@ -99,7 +99,15 @@ final class CitiesListViewModel: ObservableObject {
                 cities.first(where: { $0.id == city.id })?.isFavorite = city.isFavorite
             }
         } catch {
-            
+            informativeError = databaseErrorHandler.handle(error: error as? DatabaseError ?? .unknownError)
+            switch informativeError {
+            case .informativeError(let message):
+                toastMessage = message
+                showToast = true
+            case nil:
+                break
+            }
+
         }
     }
 
