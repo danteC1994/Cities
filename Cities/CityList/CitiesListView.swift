@@ -62,8 +62,14 @@ struct CitiesListView: View {
             onSelectedCity?(city)
         }) {
             HStack {
-                Text("\(city.name), \(city.country)")
-                    .foregroundStyle(.black)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("\(city.name), \(city.country)")
+                        .foregroundStyle(.black)
+                    Text("Lat: \(city.coordinates.lat), Lon: \(city.coordinates.lon)")
+                        .foregroundStyle(.black)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                }
                 Spacer()
                 saveButton(city)
             }
