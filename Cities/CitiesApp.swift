@@ -15,11 +15,14 @@ struct CitiesApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if ProcessInfo.processInfo.environment["XCInjectBundleInto"] != nil {
+            if ProcessInfo.processInfo.environment["IS_MAIN_APP"] != nil {
+                ContentView(shouldShowMap: false)
+                    .environmentObject(router)
+            } else if ProcessInfo.processInfo.environment["XCInjectBundleInto"] != nil {
                 EmptyView()
             } else {
                 ContentView(shouldShowMap: false)
-                    .environmentObject(router)
+                    .environmentObject(Router(viewFactory: .init(environment: .stage)))
             }
             #else
             ContentView(shouldShowMap: false)

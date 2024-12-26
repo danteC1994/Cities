@@ -34,6 +34,7 @@ struct MapView: View {
                 }
                 .edgesIgnoringSafeArea(.all)
             }
+            .navigationTitle(city.name)
         }
     }
 }

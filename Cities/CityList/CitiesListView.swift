@@ -19,6 +19,7 @@ struct CitiesListView: View {
         VStack {
             if viewModel.loading {
                 ProgressView()
+                    .accessibilityIdentifier("Progress")
             } else if let error = viewModel.error {
                 errorView(error)
             } else {
@@ -47,6 +48,7 @@ struct CitiesListView: View {
                     .frame(maxWidth: .infinity)
                     .contentShape(Rectangle())
                     .padding(.horizontal)
+                    .accessibilityIdentifier("\(city.name), \(city.country)")
                 }
             }
             .listStyle(PlainListStyle())
@@ -67,6 +69,7 @@ struct CitiesListView: View {
             }
             .padding()
         }
+        .accessibilityIdentifier("\(city.name)_button")
     }
 
     private func saveButton(_ city: City) -> some View {
@@ -75,9 +78,15 @@ struct CitiesListView: View {
                 await viewModel.toggleFavorite(for: city)
             }
         }) {
-            Image(systemName: city.isFavorite ? "star.fill" : "star")
-                .foregroundColor(city.isFavorite ? .yellow : .gray)
+            saveImage(city)
         }
+        .accessibilityIdentifier(city.isFavorite ? "\(city.name)_saved" : "\(city.name)_notSaved")
+    }
+
+    private func saveImage(_ city: City) -> some View {
+        Image(systemName: city.isFavorite ? "star.fill" : "star")
+            .accessibilityIdentifier(city.isFavorite ? "star.fill" : "star")
+            .foregroundColor(city.isFavorite ? .yellow : .gray)
     }
 
     @ViewBuilder
